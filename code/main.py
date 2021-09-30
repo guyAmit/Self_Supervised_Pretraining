@@ -47,7 +47,7 @@ def main():
     args = parser.parse_args()
     device = (torch.device(f"cuda:{args.device}")
               if torch.cuda.is_available() else "cpu")
-    net = build_net(args)
+    net = build_net(args).to(device)
     train(net, device, args)
 
 
