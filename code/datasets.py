@@ -1,10 +1,11 @@
 import os
 import random
 
+import torch
 import numpy as np
 import torchvision
 import torchvision.transforms as transforms
-import torchvision.datasets.ImageFolder as ImageFolder
+from torchvision.datasets import ImageFolder
 from torch.utils.data.dataset import Dataset
 
 

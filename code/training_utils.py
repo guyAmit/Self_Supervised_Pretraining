@@ -23,7 +23,7 @@ def train_epoch(net, trainloader, loss_func,
     return train_loss
 
 
-def test_inpinting_epoch(net, testloader, loss_func):
+def test_net(net, testloader, loss_func):
     net.eval()
     test_loss = 0
     total = 0

@@ -1,11 +1,11 @@
 import numpy as np
-
+import torch
 from torch import optim
 from torch.cuda.amp import GradScaler
 
-from .datasets import get_dataloaders
-from .loss_functions import SimClr_loss, InPainting_Loss
-from .training_utils import train_epoch, test_net
+from datasets import get_dataloaders
+from loss_functions import InPainting_Loss, SimClr_loss
+from training_utils import test_net, train_epoch
 
 
 def get_optimizer(net, args):
@@ -48,9 +48,9 @@ def train(net, device, args):
     for epoch in range(args.epochs):
         train_loss = train_epoch(net, trainloader,
                                  loss_func, optimizer,
-                                 scaler, device)
+                                 scaler)
         test_loss = test_net(net, validloader,
-                             loss_func, device)
+                             loss_func)
         print(
             f'epoch ({epoch+1})| Train loss {round(train_loss, 3)} | Test loss {round(test_loss, 3)}')
         if best_loss > test_loss:

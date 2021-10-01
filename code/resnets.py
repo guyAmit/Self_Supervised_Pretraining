@@ -112,8 +112,8 @@ class InPainting_ResNet(nn.Module):
     def forward(self, x):
         pen = self.backbone(x)
         inPainting = self.sigmoid(self.InPainting_head(pen))
-        return inPainting.view(pen.size(0), self.in_chanels,
-                               self.mask_size, self.mask_size)
+        return pen, inPainting.view(pen.size(0), self.in_chanels,
+                                    self.mask_size, self.mask_size)
 
     def penultimate_forward(self, x):
         pen = self.backbone(x)
@@ -159,5 +159,5 @@ def build_net(args):
     name = args.type+'_'+args.arch
     nets = {'InPainting_Resnet34': InPainting_Resnet34,
             'InPainting_Resnet18': InPainting_Resnet18,
-            'SimClr_Resnet18': SimClr_Resnet18, }
-    return nets[name]
+            'SimCLR_Resnet18': SimClr_Resnet18, }
+    return nets[name](args)
