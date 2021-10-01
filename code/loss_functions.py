@@ -23,8 +23,7 @@ class SimClr_loss(nn.Module):
         labels = (labels.unsqueeze(0) == labels.unsqueeze(1))
         labels = labels.to(self.device)
 
-        sim_matrix = F.cosine_similarity(features.unsqueeze(1),
-                                         features.unsqueeze(0), dim=2)
+        sim_matrix = torch.matmul(features, features.T)
 
         # discard the main diagonal from both: labels and similarities matrix
         mask = ~torch.eye(labels.shape[0], dtype=torch.bool,
