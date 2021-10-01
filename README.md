@@ -3,8 +3,8 @@ A repository containing methods to pre train DNN for image tasks
 using self supervised learning.
 
 ## Self Supervised Methods:
-1. [SimCLR][https://arxiv.org/abs/2002.05709]
-2. [InPainting][https://arxiv.org/pdf/1604.07379.pdf]
+1. [SimCLR](https://arxiv.org/abs/2002.05709)
+2. [InPainting](https://arxiv.org/pdf/1604.07379.pdf)
 3.
 
 ## Run Examples
