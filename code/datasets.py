@@ -81,6 +81,12 @@ class InPaintingDataset(Dataset):
         return img, masked_area
 
 
+def create_image_dataset(args, split):
+    image_dataset = ImageFolder(os.path.join('./data', args.dataset,
+                                             split), transform=None)
+    return image_dataset
+
+
 def get_dataset(args):
     if args.dataset == 'cifar10':
         cifar10_train = torchvision.datasets.CIFAR10(root='./data', train=True,
@@ -105,10 +111,8 @@ def get_dataset(args):
         return stl10_train, stl10_test, 96
 
     elif os.path.isdir(os.path.join('./data', args.dataset)):
-        custom_train = ImageFolder(os.path.join('./data', args.dataset,
-                                                'train'), transform=None)
-        custom_test = ImageFolder(os.path.join('./data', args.dataset,
-                                               'test'), transform=None)
+        custom_train = create_image_dataset(args, 'train')
+        custom_test = create_image_dataset(args, 'test')
         image_size = custom_train.__getitem__(0)[0].size(0)
         return custom_train, custom_test, image_size
     else:

@@ -1,5 +1,5 @@
 # Self Supervised Pretraining
-A repository containing methods to pre train DNN for image tasks
+A repository containing methods to pre train DNNs for image tasks
 using self supervised learning.
 
 ## Self Supervised Methods:
