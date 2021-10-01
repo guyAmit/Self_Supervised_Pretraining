@@ -1,5 +1,6 @@
 import torch
 import torch.nn as nn
+import torch.nn.functional as F
 
 
 class SimClr_loss(nn.Module):
@@ -22,17 +23,14 @@ class SimClr_loss(nn.Module):
         labels = (labels.unsqueeze(0) == labels.unsqueeze(1))
         labels = labels.to(self.device)
 
-        sim_matrix = torch.matmul(features, features.T)
-        assert sim_matrix.shape == (self.n_views*batch_size,
-                                    self.n_views*batch_size)
-        assert sim_matrix.shape == labels.shape
+        sim_matrix = F.cosine_similarity(features.unsqueeze(1),
+                                         features.unsqueeze(0), dim=2)
 
         # discard the main diagonal from both: labels and similarities matrix
-        mask = torch.eye(labels.shape[0], dtype=torch.bool,
-                         device=self.device)
-        labels = labels[~mask].view(labels.shape[0], -1)
-        sim_matrix = sim_matrix[~mask].view(sim_matrix.shape[0], -1)
-        assert sim_matrix.shape == labels.shape
+        mask = ~torch.eye(labels.shape[0], dtype=torch.bool,
+                          device=self.device)
+        labels = labels[mask].view(labels.shape[0], -1)
+        sim_matrix = sim_matrix[mask].view(sim_matrix.shape[0], -1)
 
         # select positives
         positives = sim_matrix[labels].view(labels.shape[0], -1)
