@@ -1,8 +1,10 @@
+import os
 import random
 
 import numpy as np
 import torchvision
 import torchvision.transforms as transforms
+import torchvision.datasets.ImageFolder as ImageFolder
 from torch.utils.data.dataset import Dataset
 
 
@@ -89,7 +91,7 @@ def get_dataset(args):
                                                     transform=None)
         return cifar10_train, cifar10_test, 32
 
-    elif args.dataset == 'STL10':
+    elif args.dataset == 'stl10':
         stl10_train = torchvision.datasets.STL10(root='./data',
                                                  split='unlabeled',
                                                  transform=None,
@@ -101,6 +103,13 @@ def get_dataset(args):
                                                 download=True)
         return stl10_train, stl10_test, 96
 
+    elif os.path.isdir(os.path.join('./data', args.dataset)):
+        custom_train = ImageFolder(os.path.join('./data', args.dataset,
+                                                'train'), transform=None)
+        custom_test = ImageFolder(os.path.join('./data', args.dataset,
+                                               'test'), transform=None)
+        image_size = custom_train.__getitem__(0)[0].size(0)
+        return custom_train, custom_test, image_size
     else:
         print('Not implemented')
         exit(-1)

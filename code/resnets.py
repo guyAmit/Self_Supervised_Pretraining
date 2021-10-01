@@ -140,17 +140,19 @@ class SimClr_ResNet(nn.Module):
         return pen
 
 
-def InPainting_Resnet34(mask_size):
-    return InPainting_ResNet(BasicBlock, [3, 4, 6, 3], mask_size=mask_size)
+def InPainting_Resnet34(args):
+    return InPainting_ResNet(BasicBlock, [3, 4, 6, 3],
+                             mask_size=args.mask_size)
 
 
-def InPainting_Resnet18(mask_size):
-    return InPainting_ResNet(BasicBlock, [2, 2, 2, 2], mask_size=mask_size)
+def InPainting_Resnet18(args):
+    return InPainting_ResNet(BasicBlock, [2, 2, 2, 2],
+                             mask_size=args.mask_size)
 
 
-def SimClr_Resnet18(projection_size):
+def SimClr_Resnet18(args):
     return SimClr_ResNet(BasicBlock, [2, 2, 2, 2],
-                         projection_size=projection_size)
+                         projection_size=args.projection_size)
 
 
 def build_net(args):

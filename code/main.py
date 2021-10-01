@@ -9,7 +9,8 @@ parser.add_argument('-type',  default='SimCLR',
                     help='Select the pretraining type',
                     choices=['SimCLR', 'InPainting'])
 parser.add_argument('--dataset-name', default='stl10',
-                    help='dataset name', choices=['stl10', 'cifar10'])
+                    help='dataset name, if costum place it in the data folder',
+                    choices=['stl10', 'cifar10'])
 parser.add_argument('--arch', metavar='ARCH', default='resnet18',
                     choices=['resnet18', 'resnet34'], help='achitecture type')
 
@@ -37,6 +38,8 @@ parser.add_argument('--temperature', default=0.07, type=float,
                     help='softmax temperature (default: 0.07)')
 parser.add_argument('--n_views', default=2, type=int,
                     help='Number of views for contrastive learning.')
+parser.add_argument('--projection_size', default=128, type=int,
+                    help='Size of projection head for SimCLR (default: 128)')
 parser.add_argument('--mask_size', default=8, type=int,
                     help='Maksed area size (size, size).')
 
