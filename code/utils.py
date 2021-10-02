@@ -4,7 +4,7 @@ from torch import optim
 from torch.cuda.amp import GradScaler
 
 from datasets import get_dataloaders
-from loss_functions import InPainting_Loss, SimClr_loss, SimClr_2views_loss
+from loss_functions import InPainting_Loss, SimClr_2views_loss, SimClr_loss
 from training_utils import test_net, train_epoch
 
 
