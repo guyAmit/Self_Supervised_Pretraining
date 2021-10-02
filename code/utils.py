@@ -4,7 +4,7 @@ from torch import optim
 from torch.cuda.amp import GradScaler
 
 from datasets import get_dataloaders
-from loss_functions import InPainting_Loss, SimClr_loss
+from loss_functions import InPainting_Loss, SimClr_loss, SimClr_2views_loss
 from training_utils import test_net, train_epoch
 
 
@@ -25,7 +25,12 @@ def get_optimizer(net, args):
 
 def get_loss_function(net, device, args):
     if args.type == 'SimCLR':
-        return SimClr_loss(net, device, args)
+        if args.n_views == 2:
+            return SimClr_2views_loss(net, device, args)
+        elif args.n_views > 2:
+            return SimClr_loss(net, device, args)
+        else:
+            print('number of views must be at least 2')
     elif args.type == 'InPainting':
         return InPainting_Loss(net, device, args)
     else:
