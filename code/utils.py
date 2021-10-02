@@ -52,15 +52,12 @@ def train(net, device, args):
         test_loss = test_net(net, validloader,
                              loss_func)
         print(
-            f'epoch ({epoch+1})| Train loss {round(train_loss, 3)} | \
-            Test loss {round(test_loss, 3)}')
+            f'epoch ({epoch+1})| Train loss {round(train_loss, 3)} | Test loss {round(test_loss, 3)}')
         if best_loss > test_loss:
             print('Saving model...')
             model_state = {'net': net.state_dict(),
                            'loss': test_loss, 'epoch': epoch}
-            torch.save(model_state,
-                       f'./models/{args.arch}_{args.type}_{args.dataset} \
-                       .ckpt.pth')
+            torch.save(model_state, f'./models/{args.type}.ckpt.pth')
             best_loss = test_loss
         if epoch <= 10:
             scheduler.step()
