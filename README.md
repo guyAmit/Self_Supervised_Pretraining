@@ -4,8 +4,8 @@ using self supervised learning.
 
 ## Self Supervised Methods:
 1. [SimCLR](https://arxiv.org/abs/2002.05709)
+2. [VICReg](https://arxiv.org/pdf/2105.04906.pdf)
 2. [InPainting](https://arxiv.org/pdf/1604.07379.pdf)
-3.
 
 ## Run Examples
 1. Train Resnet18 using SimCLR on stl10 dataset with 3 views
