@@ -120,9 +120,9 @@ class InPainting_ResNet(nn.Module):
         return pen
 
 
-class SimClr_ResNet(nn.Module):
+class Contrastive_ResNet(nn.Module):
     def __init__(self, block, num_blocks, projection_size=128):
-        super(SimClr_ResNet, self).__init__()
+        super(Contrastive_ResNet, self).__init__()
         self.backbone = Resnet_backbone(block, num_blocks)
         self.normalize = F.normalize
         self.projection_layer = nn.Linear(512*block.expansion,
@@ -150,14 +150,16 @@ def InPainting_Resnet18(args):
                              mask_size=args.mask_size)
 
 
-def SimClr_Resnet18(args):
-    return SimClr_ResNet(BasicBlock, [2, 2, 2, 2],
-                         projection_size=args.projection_size)
+def Contrastive_Resnet18(args):
+    return Contrastive_ResNet(BasicBlock, [2, 2, 2, 2],
+                              projection_size=args.projection_size)
 
 
 def build_net(args):
     name = args.type+'_'+args.arch
     nets = {'InPainting_Resnet34': InPainting_Resnet34,
             'InPainting_Resnet18': InPainting_Resnet18,
-            'SimCLR_Resnet18': SimClr_Resnet18, }
+            'SimCLR_Resnet18': Contrastive_Resnet18,
+            'VICReg_Resnet18': Contrastive_Resnet18,
+            }
     return nets[name](args)

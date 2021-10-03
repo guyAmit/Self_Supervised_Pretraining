@@ -4,7 +4,8 @@ from torch import optim
 from torch.cuda.amp import GradScaler
 
 from datasets import get_dataloaders
-from loss_functions import InPainting_Loss, SimClr_2views_loss, SimClr_loss
+from loss_functions import (InPainting_Loss, SimClr_2views_loss, SimClr_loss,
+                            VICReg_Loss)
 from training_utils import test_net, train_epoch
 
 
@@ -33,6 +34,8 @@ def get_loss_function(net, device, args):
             print('number of views must be at least 2')
     elif args.type == 'InPainting':
         return InPainting_Loss(net, device, args)
+    elif args.type == 'VICReg':
+        return VICReg_Loss(net, device, args)
     else:
         print('Not Implemented')
         quit(-1)
@@ -62,7 +65,9 @@ def train(net, device, args):
             print('Saving model...')
             model_state = {'net': net.state_dict(),
                            'loss': test_loss, 'epoch': epoch}
-            torch.save(model_state, f'./models/{args.type}.ckpt.pth')
+            torch.save(
+                model_state, f'./models/{args.type}_{args.arch}_\
+                {args.dataset}.ckpt.pth')
             best_loss = test_loss
         if epoch <= 10:
             scheduler.step()

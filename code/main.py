@@ -9,7 +9,7 @@ parser = argparse.ArgumentParser(
     description='PyTorch Self-Supervised Pretraining')
 parser.add_argument('-type',  default='SimCLR',
                     help='Select the pretraining type',
-                    choices=['SimCLR', 'InPainting'])
+                    choices=['VICReg', 'SimCLR', 'InPainting'])
 parser.add_argument('--dataset', default='stl10',
                     help='dataset name: stl10 or cifar10, \
                     if costum place it in the data folder')
@@ -43,6 +43,12 @@ parser.add_argument('--projection_size', default=128, type=int,
                     help='Size of projection head for SimCLR (default: 128)')
 parser.add_argument('--mask_size', default=8, type=int,
                     help='Maksed area size (size, size).')
+parser.add_argument('--alpha', default=0.333, type=float,
+                    help='VICReg alpha (default: 0.33)')
+parser.add_argument('--beta', default=0.333, type=float,
+                    help='VICReg beta (default: 0.33)')
+parser.add_argument('--gamma', default=0.333, type=float,
+                    help='VICReg gamma (default: 0.33)')
 
 parser.add_argument('--device', default=0, type=int, help='Gpu index.')
 
