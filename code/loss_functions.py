@@ -47,6 +47,7 @@ class SimClr_2views_loss(nn.Module):
 
     def __init__(self, net, device, args):
         super(SimClr_2views_loss, self).__init__()
+        self.net = net
         self.n_views = args.n_views
         self.temperature = args.temperature
         self.device = device
@@ -74,21 +75,21 @@ class VICReg_Loss(nn.Module):
 
     def __init__(self, net, device, args):
         super(VICReg_Loss, self).__init__()
-        self.temperature = args.temperature
+        self.net = net
         self.device = device
-        self.alpha = args.alpha
-        self.beta = args.beta
-        self.gamma = args.gamma
+        self.lambd = args.lambd
+        self.mu = args.mu
+        self.nu = args.nu
 
         self.mse_loss = nn.MSELoss()
-        self.relu = nn.Relu()
+        self.relu = nn.ReLU()
 
     def std_loss(self, z):
         var = torch.sqrt(z.var(dim=0))
         loss = torch.mean(self.relu(1-var))
         return loss
 
-    def cov_lss(self, z):
+    def cov_loss(self, z):
         batch_size = z.size(0)
         Z = z - z.mean(dim=0, keepdims=True)
         cov = Z@Z.T / (batch_size-1)
@@ -107,7 +108,7 @@ class VICReg_Loss(nn.Module):
         std_loss = self.std_loss(z_a)+self.std_loss(z_b)
         cov_loss = self.cov_loss(z_a)+self.cov_loss(z_b)
 
-        return self.lambd*sim_loss + self.beta*std_loss+self.gamma*cov_loss
+        return self.lambd*sim_loss + self.mu*std_loss+self.nu*cov_loss
 
 
 class InPainting_Loss(nn.Module):

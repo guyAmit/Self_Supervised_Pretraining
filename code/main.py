@@ -20,7 +20,7 @@ parser.add_argument('--workers', default=6, type=int,
                     help='number of data loading workers for each loader')
 parser.add_argument('--epochs', default=200, type=int,
                     help='number of total epochs to run')
-parser.add_argument('--batch-size', default=128, type=int,
+parser.add_argument('--batch_size', default=128, type=int,
                     help='mini-batch size (default: 128), this is the total')
 
 parser.add_argument('--opti', '--optimizer', default='SGD',
@@ -43,12 +43,12 @@ parser.add_argument('--projection_size', default=128, type=int,
                     help='Size of projection head for SimCLR (default: 128)')
 parser.add_argument('--mask_size', default=8, type=int,
                     help='Maksed area size (size, size).')
-parser.add_argument('--alpha', default=0.333, type=float,
-                    help='VICReg alpha (default: 0.33)')
-parser.add_argument('--beta', default=0.333, type=float,
-                    help='VICReg beta (default: 0.33)')
-parser.add_argument('--gamma', default=0.333, type=float,
-                    help='VICReg gamma (default: 0.33)')
+parser.add_argument('--lambd', default=25, type=float,
+                    help='VICReg lambd (default: 25)')
+parser.add_argument('--mu', default=25, type=float,
+                    help='VICReg mu (default: 0.33)')
+parser.add_argument('--nu', default=1, type=float,
+                    help='VICReg nu (default: 1)')
 
 parser.add_argument('--device', default=0, type=int, help='Gpu index.')
 
