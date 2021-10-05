@@ -56,7 +56,7 @@ HELP:
   --device DEVICE       Gpu index.
 ```
 
-## Softwere Requirments
+## Software Requirments
 ```
 numpy=1.19.2=py38h54aff64_0
 numpy-base=1.19.2=py38hfa32c7d_0
