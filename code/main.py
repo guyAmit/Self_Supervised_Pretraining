@@ -25,14 +25,17 @@ parser.add_argument('--batch_size', default=128, type=int,
 
 parser.add_argument('--opti', '--optimizer', default='SGD',
                     help='Select the otimizer type',
-                    choices=['SGD', 'Adam'])
+                    choices=['SGD', 'Adam', 'LARS'])
 
 parser.add_argument('--lr', '--learning-rate', default=0.1, type=float,
                     help='initial learning rate', dest='lr')
+parser.add_argument('--grade_scale', default=False, type=bool,
+                    help='To use or not to use grade scaling (defualt: False)',
+                    choices=[True, False])
 parser.add_argument('--weight_decay', default=1e-4, type=float,
                     help='weight decay (default: 1e-4)')
 parser.add_argument('--momentum', default=0.9, type=float,
-                    help='SGD optimizer momentum (default:0.9 for SGD)',)
+                    help='SGD optimizer momentum (default:0.9)',)
 parser.add_argument('--seed', default=1, type=int,
                     help='seed for initializing training. ')
 parser.add_argument('--temperature', default=0.07, type=float,
@@ -40,15 +43,15 @@ parser.add_argument('--temperature', default=0.07, type=float,
 parser.add_argument('--n_views', default=2, type=int,
                     help='Number of views for contrastive learning.')
 parser.add_argument('--projection_size', default=128, type=int,
-                    help='Size of projection head for SimCLR (default: 128)')
+                    help='projection head size (default: 128)')
 parser.add_argument('--mask_size', default=8, type=int,
                     help='Maksed area size (size, size).')
-parser.add_argument('--lambd', default=25, type=float,
-                    help='VICReg lambd (default: 25)')
-parser.add_argument('--mu', default=25, type=float,
-                    help='VICReg mu (default: 0.33)')
-parser.add_argument('--nu', default=1, type=float,
-                    help='VICReg nu (default: 1)')
+parser.add_argument('--lambd', default=1000, type=float,
+                    help='VICReg lambd (default: 1000)')
+parser.add_argument('--mu', default=2, type=float,
+                    help='VICReg mu (default: 2)')
+parser.add_argument('--nu', default=0.01, type=float,
+                    help='VICReg nu (default: 1e5)')
 
 parser.add_argument('--device', default=0, type=int, help='Gpu index.')
 

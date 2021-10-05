@@ -1,12 +1,6 @@
 import torch.nn as nn
 import torch.nn.functional as F
 
-__all__ = [
-    "SimClr_Resnet18",
-    "InPainting_Resnet18",
-    "InPainting_Resnet34",
-]
-
 
 class BasicBlock(nn.Module):
     expansion = 1

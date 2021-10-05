@@ -85,8 +85,8 @@ class VICReg_Loss(nn.Module):
         self.relu = nn.ReLU()
 
     def std_loss(self, z):
-        var = torch.sqrt(z.var(dim=0))
-        loss = torch.mean(self.relu(1-var))
+        var = z.var(dim=0)
+        loss = self.relu(1-var).mean()
         return loss
 
     def cov_loss(self, z):
