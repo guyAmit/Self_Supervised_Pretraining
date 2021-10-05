@@ -4,8 +4,10 @@ from torch import optim
 from torch.cuda.amp import GradScaler
 
 from datasets import get_dataloaders
-from loss_functions import InPainting_Loss, SimClr_2views_loss, SimClr_loss
+from loss_functions import (InPainting_Loss, SimClr_2views_loss, SimClr_loss,
+                            VICReg_Loss)
 from training_utils import test_net, train_epoch
+from lars import LARS
 
 
 def get_optimizer(net, args):
@@ -13,14 +15,16 @@ def get_optimizer(net, args):
         optimizer = optim.SGD(net.parameters(), lr=args.lr,
                               momentum=args.momentum,
                               weight_decay=args.weight_decay)
-        return optimizer
     elif args.opti == 'Adam':
         optimizer = optim.Adam(net.parameters(), lr=args.lr,
                                weight_decay=args.weight_decay)
-        return optimizer
+    elif args.opti == 'LARS':
+        optimizer = LARS(net.parameters(), lr=args.batch_size/(args.lr*256),
+                         weight_decay=args.weight_decay)
     else:
         print('Not Implemented')
         exit(-1)
+    return optimizer
 
 
 def get_loss_function(net, device, args):
@@ -33,6 +37,8 @@ def get_loss_function(net, device, args):
             print('number of views must be at least 2')
     elif args.type == 'InPainting':
         return InPainting_Loss(net, device, args)
+    elif args.type == 'VICReg':
+        return VICReg_Loss(net, device, args)
     else:
         print('Not Implemented')
         quit(-1)
@@ -49,20 +55,22 @@ def train(net, device, args):
                                                                trainloader),
                                                            eta_min=0,
                                                            last_epoch=-1)
-    scaler = GradScaler(enabled=True)
+    scaler = GradScaler(enabled=args.grade_scale)
     for epoch in range(args.epochs):
         train_loss = train_epoch(net, trainloader,
                                  loss_func, optimizer,
-                                 scaler)
+                                 scaler, args)
         test_loss = test_net(net, validloader,
                              loss_func)
         print(
-            f'epoch ({epoch+1})| Train loss {round(train_loss, 3)} | Test loss {round(test_loss, 3)}')
+            f'epoch ({epoch+1})| Train loss {round(train_loss, 6)} | Test loss {round(test_loss, 6)}')
         if best_loss > test_loss:
             print('Saving model...')
             model_state = {'net': net.state_dict(),
                            'loss': test_loss, 'epoch': epoch}
-            torch.save(model_state, f'./models/{args.type}.ckpt.pth')
+            torch.save(
+                model_state, f'./models/{args.type}_{args.arch}_\
+                {args.dataset}.ckpt.pth')
             best_loss = test_loss
         if epoch <= 10:
             scheduler.step()

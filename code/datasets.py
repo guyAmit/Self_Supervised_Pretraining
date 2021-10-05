@@ -130,7 +130,9 @@ def create_dataloader(dataset, args):
 
 def get_dataloaders(args):
     train, test, image_size = get_dataset(args)
-    if args.type == 'SimCLR':
+    if args.type in ['SimCLR', 'VICReg']:
+        if args.type == 'VICReg':
+            assert args.n_views == 2
         train_data = ViewsDataset(train, args)
         valid_data = ViewsDataset(test, args)
     elif args.type == 'InPainting':
