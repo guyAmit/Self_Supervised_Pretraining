@@ -1,13 +1,16 @@
+import logging
+
 import numpy as np
 import torch
 from torch import optim
 from torch.cuda.amp import GradScaler
 
 from datasets import get_dataloaders
+from lars import LARS
 from loss_functions import (InPainting_Loss, SimClr_2views_loss, SimClr_loss,
                             VICReg_Loss)
 from training_utils import test_net, train_epoch
-from lars import LARS
+from consts import train_msg, save_path
 
 
 def get_optimizer(net, args):
@@ -44,7 +47,20 @@ def get_loss_function(net, device, args):
         quit(-1)
 
 
+def save_moedel(net, test_loss, epoch, args):
+    print('Saving model...')
+    logging.info('Saving model...')
+    model_state = {'net': net.state_dict(),
+                   'loss': test_loss, 'epoch': epoch}
+    f'./models/{args.type}_{args.arch}_{args.dataset}.ckpt.pth'
+    torch.save(
+        model_state, save_path.format(args.type, args.arch,
+                                      args.dataset))
+
+
 def train(net, device, args):
+    logging.basicConfig(filename=f'{args.type}_{args.arch}_{args.dataset}.log',
+                        level=logging.INFO)
     best_loss = np.inf
     optimizer = get_optimizer(net, args)
     trainloader, validloader = get_dataloaders(args)
@@ -62,15 +78,12 @@ def train(net, device, args):
                                  scaler, args)
         test_loss = test_net(net, validloader,
                              loss_func)
-        print(
-            f'epoch ({epoch+1})| Train loss {round(train_loss, 6)} | Test loss {round(test_loss, 6)}')
+        print(train_msg.format(epoch+1, round(train_loss, 6),
+                               round(test_loss, 6)))
+        logging.info(train_msg.format(epoch+1, round(train_loss, 6),
+                                      round(test_loss, 6)))
         if best_loss > test_loss:
-            print('Saving model...')
-            model_state = {'net': net.state_dict(),
-                           'loss': test_loss, 'epoch': epoch}
-            torch.save(
-                model_state, f'./models/{args.type}_{args.arch}_\
-                {args.dataset}.ckpt.pth')
+            save_moedel(net, test_loss, epoch, args)
             best_loss = test_loss
         if epoch <= 10:
             scheduler.step()
