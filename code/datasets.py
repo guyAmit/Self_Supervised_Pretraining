@@ -10,7 +10,7 @@ from torch.utils.data.dataset import Dataset
 
 
 class ViewsDataset(Dataset):
-    def __init__(self, dataset, args):
+    def __init__(self, dataset, img_size, args):
         '''
         dataset: a pytorh dataset without a transform
         transform: transform sequanace
@@ -18,10 +18,12 @@ class ViewsDataset(Dataset):
         self.dataset = dataset
         self.n_views = args.n_views
         self.transform = transforms.Compose([
-            transforms.RandomCrop(32, padding=2),
+            transforms.RandomCrop(img_size, padding=2),
             transforms.RandomApply([
-                transforms.ColorJitter(hue=.03,
-                                       brightness=.5)], p=6),
+                transforms.ColorJitter(brightness=0.4,
+                                       contrast=0.4,
+                                       saturation=0.4,
+                                       hue=0.1)], p=0.8),
             transforms.RandomGrayscale(p=0.2),
             transforms.RandomHorizontalFlip(),
             transforms.ToTensor()
@@ -49,7 +51,7 @@ class InPaintingDataset(Dataset):
         self.mask_size = args.mask_size
         self.h_mask_size = args.mask_size//2
         self.transform = transforms.Compose([
-            transforms.RandomCrop(32, padding=2),
+            transforms.RandomCrop(img_size, padding=2),
             transforms.RandomApply([transforms.ColorJitter(hue=.03,
                                                            brightness=.5)],
                                    p=6),
@@ -130,8 +132,8 @@ def create_dataloader(dataset, args):
 
 def get_dataloaders(args):
     train, test, image_size = get_dataset(args)
-    if args.type in ['SimCLR', 'VICReg']:
-        if args.type == 'VICReg':
+    if args.type in ['SimCLR', 'VICReg', 'SimSiam']:
+        if args.type in ['VICReg', 'SiamSiam']:
             assert args.n_views == 2
         train_data = ViewsDataset(train, args)
         valid_data = ViewsDataset(test, args)

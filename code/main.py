@@ -9,7 +9,7 @@ parser = argparse.ArgumentParser(
     description='PyTorch Self-Supervised Pretraining')
 parser.add_argument('-type',  default='SimCLR',
                     help='Select the pretraining type',
-                    choices=['VICReg', 'SimCLR', 'InPainting'])
+                    choices=['VICReg', 'SimCLR', 'SimSiam', 'InPainting'])
 parser.add_argument('--dataset', default='stl10',
                     help='dataset name: stl10 or cifar10, \
                     if costum place it in the data folder')
@@ -18,16 +18,13 @@ parser.add_argument('--arch', default='Resnet18',
 
 parser.add_argument('--workers', default=6, type=int,
                     help='number of data loading workers for each loader')
-parser.add_argument('--epochs', default=200, type=int,
+parser.add_argument('--epochs', default=1000, type=int,
                     help='number of total epochs to run')
-parser.add_argument('--batch_size', default=128, type=int,
-                    help='mini-batch size (default: 128), this is the total')
-
-parser.add_argument('--opti', '--optimizer', default='SGD',
-                    help='Select the otimizer type',
+parser.add_argument('--batch_size', default=512, type=int,
+                    help='mini-batch size (default: 512), this is the total')
+parser.add_argument('--opti', default='SGD', help='Select the otimizer type',
                     choices=['SGD', 'Adam', 'LARS'])
-
-parser.add_argument('--lr', '--learning-rate', default=0.1, type=float,
+parser.add_argument('--lr', default=0.03, type=float,
                     help='initial learning rate', dest='lr')
 parser.add_argument('--grade_scale', default=False, type=bool,
                     help='To use or not to use grade scaling (defualt: False)',

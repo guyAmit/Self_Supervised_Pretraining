@@ -134,6 +134,47 @@ class Contrastive_ResNet(nn.Module):
         return pen
 
 
+class SimSiam_ResNet(nn.Module):
+    def __init__(self, block, num_blocks, projection_size=128,
+                 projection_hiden_size=2048, predictor_hiden_size=512):
+        super(SimSiam_ResNet, self).__init__()
+        self.backbone = Resnet_backbone(block, num_blocks)
+        self.normalize = F.normalize
+        self.projector = nn.Sequential(nn.Linear(512*block.expansion,
+                                                 projection_hiden_size,
+                                                 bias=False),
+                                       nn.BatchNorm1d(projection_hiden_size),
+                                       nn.ReLu(),
+                                       nn.Linear(projection_hiden_size,
+                                                 projection_hiden_size,
+                                                 bias=False),
+                                       nn.BatchNorm1d(projection_hiden_size),
+                                       nn.ReLu(),
+                                       nn.Linear(projection_hiden_size,
+                                                 projection_size, bias=False),
+                                       nn.BatchNorm1d(projection_size))
+        self.predictor = nn.Sequential(nn.Linear(projection_size,
+                                                 predictor_hiden_size,
+                                                 bias=False),
+                                       nn.BatchNorm1d(predictor_hiden_size),
+                                       nn.ReLu(),
+                                       nn.Linear(predictor_hiden_size,
+                                                 projection_size))
+
+    def forward(self, x):
+        pen = self.backbone(x)
+        projection = self.projector(pen)
+        prediction = self.predictor(projection)
+
+        projection = F.normalize(projection.detach(), dim=1)
+        prediction = F.normalize(prediction, dim=1)
+        return pen, projection, prediction
+
+    def penultimate_forward(self, x):
+        pen = self.backbone(x)
+        return pen
+
+
 def InPainting_Resnet34(args):
     return InPainting_ResNet(BasicBlock, [3, 4, 6, 3],
                              mask_size=args.mask_size)
@@ -149,11 +190,17 @@ def Contrastive_Resnet18(args):
                               projection_size=args.projection_size)
 
 
+def SimSiam_Resnet18(args):
+    return SimSiam_ResNet(BasicBlock, [2, 2, 2, 2],
+                          projection_size=args.projection_size)
+
+
 def build_net(args):
     name = args.type+'_'+args.arch
     nets = {'InPainting_Resnet34': InPainting_Resnet34,
             'InPainting_Resnet18': InPainting_Resnet18,
             'SimCLR_Resnet18': Contrastive_Resnet18,
             'VICReg_Resnet18': Contrastive_Resnet18,
+            'SimSiam_Resnet18': SimSiam_Resnet18,
             }
     return nets[name](args)

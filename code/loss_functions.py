@@ -71,7 +71,7 @@ class SimClr_2views_loss(nn.Module):
         return loss
 
 
-class VICReg_Loss(nn.Module):
+class VICReg_loss(nn.Module):
 
     def __init__(self, net, device, args):
         super(VICReg_Loss, self).__init__()
@@ -111,10 +111,27 @@ class VICReg_Loss(nn.Module):
         return self.lambd*sim_loss + self.mu*std_loss+self.nu*cov_loss
 
 
-class InPainting_Loss(nn.Module):
+class SimSiam_loss(nn.Module):
 
     def __init__(self, net, device, args):
-        super(InPainting_Loss, self).__init__()
+        super(SimSiam_loss, self).__init__()
+        self.net = net
+        self.device = device
+
+    def forward(self, inputs):
+        _, proj1, pred1 = self.net(inputs[0].to(self.device))
+        _, proj2, pred2 = self.net(inputs[1].to(self.device))
+
+        loss1 = -(proj2 * pred1).sum(dim=1).mean()
+        loss2 = -(proj1 * pred2).sum(dim=1).mean()
+
+        return .5*loss1 + .5*loss2
+
+
+class InPainting_loss(nn.Module):
+
+    def __init__(self, net, device, args):
+        super(InPainting_loss, self).__init__()
         self.net = net
         self.device = device
         self.criterion = nn.MSELoss()
