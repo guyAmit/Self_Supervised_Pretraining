@@ -5,6 +5,7 @@ using self supervised learning.
 ## Self Supervised Methods:
 1. [SimCLR](https://arxiv.org/abs/2002.05709)
 2. [VICReg](https://arxiv.org/pdf/2105.04906.pdf)
+3. [SimSiam](https://arxiv.org/pdf/2011.10566v1.pdf)
 2. [InPainting](https://arxiv.org/pdf/1604.07379.pdf)
 
 ## Run Examples
@@ -24,7 +25,7 @@ python main.py -type InPainting --arch Resnet34 --dataset cifar10 --mask_size 8
 HELP:
 ```
   -h, --help            show this help message and exit
-  -type {VICReg,SimCLR,InPainting}
+  -type {VICReg,SimCLR,SimSiam,InPainting}
                         Select the pretraining type
   --dataset DATASET     dataset name: stl10 or cifar10, if costum place it in the data folder
   --arch {Resnet18,Resnet34}
@@ -32,11 +33,10 @@ HELP:
   --workers WORKERS     number of data loading workers for each loader
   --epochs EPOCHS       number of total epochs to run
   --batch_size BATCH_SIZE
-                        mini-batch size (default: 128), this is the total
-  --opti {SGD,Adam,LARS}, --optimizer {SGD,Adam,LARS}
+                        mini-batch size (default: 512), this is the total
+  --opti {SGD,Adam,LARS}
                         Select the otimizer type
-  --lr LR, --learning-rate LR
-                        initial learning rate
+  --lr LR               initial learning rate
   --grade_scale {True,False}
                         To use or not to use grade scaling (defualt: False)
   --weight_decay WEIGHT_DECAY
