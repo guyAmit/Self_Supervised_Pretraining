@@ -1,13 +1,15 @@
+import logging
+
 import numpy as np
 import torch
 from torch import optim
 from torch.cuda.amp import GradScaler
 
 from datasets import get_dataloaders
+from lars import LARS
 from loss_functions import (InPainting_Loss, SimClr_2views_loss, SimClr_loss,
                             VICReg_Loss)
 from training_utils import test_net, train_epoch
-from lars import LARS
 
 
 def get_optimizer(net, args):
@@ -45,6 +47,8 @@ def get_loss_function(net, device, args):
 
 
 def train(net, device, args):
+    logging.baseconfig(filename=f'{args.type}_{args.arch}_{args.dataset}.log',
+                       level=logging.INFO)
     best_loss = np.inf
     optimizer = get_optimizer(net, args)
     trainloader, validloader = get_dataloaders(args)
@@ -64,13 +68,15 @@ def train(net, device, args):
                              loss_func)
         print(
             f'epoch ({epoch+1})| Train loss {round(train_loss, 6)} | Test loss {round(test_loss, 6)}')
+        logging.info(
+            f'epoch ({epoch+1})| Train loss {round(train_loss, 6)} | Test loss {round(test_loss, 6)}')
         if best_loss > test_loss:
             print('Saving model...')
             model_state = {'net': net.state_dict(),
                            'loss': test_loss, 'epoch': epoch}
             torch.save(
-                model_state, f'./models/{args.type}_{args.arch}_\
-                {args.dataset}.ckpt.pth')
+                model_state, f'./models/{args.type}_{args.arch}_{args.dataset}.ckpt.pth')
+            logging.info('Saved model...')
             best_loss = test_loss
         if epoch <= 10:
             scheduler.step()
