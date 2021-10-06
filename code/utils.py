@@ -59,8 +59,8 @@ def save_moedel(net, test_loss, epoch, args):
 
 
 def train(net, device, args):
-    logging.baseconfig(filename=f'{args.type}_{args.arch}_{args.dataset}.log',
-                       level=logging.INFO)
+    logging.basicConfig(filename=f'{args.type}_{args.arch}_{args.dataset}.log',
+                        level=logging.INFO)
     best_loss = np.inf
     optimizer = get_optimizer(net, args)
     trainloader, validloader = get_dataloaders(args)
