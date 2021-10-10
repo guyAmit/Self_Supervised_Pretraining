@@ -7,8 +7,8 @@ from torch.cuda.amp import GradScaler
 
 from datasets import get_dataloaders
 from lars import LARS
-from loss_functions import (InPainting_Loss, SimClr_2views_loss, SimClr_loss,
-                            VICReg_Loss)
+from loss_functions import (InPainting_loss, SimClr_2views_loss, SimClr_loss,
+                            VICReg_loss, SimSiam_loss)
 from training_utils import test_net, train_epoch
 from consts import train_msg, save_path
 
@@ -39,9 +39,11 @@ def get_loss_function(net, device, args):
         else:
             print('number of views must be at least 2')
     elif args.type == 'InPainting':
-        return InPainting_Loss(net, device, args)
+        return InPainting_loss(net, device, args)
     elif args.type == 'VICReg':
-        return VICReg_Loss(net, device, args)
+        return VICReg_loss(net, device, args)
+    elif args.type == 'SimSiam':
+        return SimSiam_loss(net, device, args)
     else:
         print('Not Implemented')
         quit(-1)
@@ -85,5 +87,4 @@ def train(net, device, args):
         if best_loss > test_loss:
             save_moedel(net, test_loss, epoch, args)
             best_loss = test_loss
-        if epoch <= 10:
-            scheduler.step()
+        scheduler.step()
