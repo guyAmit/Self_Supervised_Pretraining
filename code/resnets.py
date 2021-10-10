@@ -144,12 +144,12 @@ class SimSiam_ResNet(nn.Module):
                                                  projection_hiden_size,
                                                  bias=False),
                                        nn.BatchNorm1d(projection_hiden_size),
-                                       nn.ReLu(),
+                                       nn.ReLU(),
                                        nn.Linear(projection_hiden_size,
                                                  projection_hiden_size,
                                                  bias=False),
                                        nn.BatchNorm1d(projection_hiden_size),
-                                       nn.ReLu(),
+                                       nn.ReLU(),
                                        nn.Linear(projection_hiden_size,
                                                  projection_size, bias=False),
                                        nn.BatchNorm1d(projection_size))
@@ -157,7 +157,7 @@ class SimSiam_ResNet(nn.Module):
                                                  predictor_hiden_size,
                                                  bias=False),
                                        nn.BatchNorm1d(predictor_hiden_size),
-                                       nn.ReLu(),
+                                       nn.ReLU(),
                                        nn.Linear(predictor_hiden_size,
                                                  projection_size))
 
@@ -166,8 +166,8 @@ class SimSiam_ResNet(nn.Module):
         projection = self.projector(pen)
         prediction = self.predictor(projection)
 
-        projection = F.normalize(projection.detach(), dim=1)
-        prediction = F.normalize(prediction, dim=1)
+        projection = self.normalize(projection.detach(), dim=1)
+        prediction = self.normalize(prediction, dim=1)
         return pen, projection, prediction
 
     def penultimate_forward(self, x):
